@@ -1,4 +1,4 @@
-using APBD_2.Database.Interfaces;
+using APBD_2.Database.Abstract;
 
 namespace APBD_2.Database.Models;
 
