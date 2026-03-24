@@ -1,6 +1,6 @@
 using APBD_2.Database.Enums;
 
-namespace APBD_2.Database.Interfaces;
+namespace APBD_2.Database.Abstract;
 
 public abstract class User
 {

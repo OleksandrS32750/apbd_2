@@ -1,6 +1,7 @@
 using APBD_2.Database.Enums;
-using APBD_2.Database.Interfaces;
+using APBD_2.Database.Abstract;
 using APBD_2.Database.Models;
+using APBD_2.Services.Interfaces;
 
 namespace APBD_2.Services;
 

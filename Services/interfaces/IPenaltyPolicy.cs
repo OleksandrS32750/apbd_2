@@ -1,6 +1,6 @@
 using APBD_2.Database.Models;
 
-namespace APBD_2.Services;
+namespace APBD_2.Services.Interfaces;
 
 public interface IPenaltyPolicy
 {
