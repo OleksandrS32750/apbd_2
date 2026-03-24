@@ -5,7 +5,7 @@ namespace APBD_2.Database.Models;
 
 public sealed class Employee : User
 {
-    public Employee(int id, string firstName, string lastName) : base(id, firstName, lastName)
+    public Employee(string firstName, string lastName) : base(firstName, lastName)
     {
     }
 

@@ -5,7 +5,7 @@ namespace APBD_2.Database.Models;
 
 public sealed class Student : User
 {
-    public Student(int id, string firstName, string lastName) : base(id, firstName, lastName)
+    public Student(string firstName, string lastName) : base(firstName, lastName)
     {
     }
 

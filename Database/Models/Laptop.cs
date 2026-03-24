@@ -4,7 +4,7 @@ namespace APBD_2.Database.Models;
 
 public sealed class Laptop : Equipment
 {
-    public Laptop(int id, string name, int ramGb, int storageGb) : base(id, name)
+    public Laptop(string name, int ramGb, int storageGb) : base(name)
     {
         RamGb = ramGb;
         StorageGb = storageGb;

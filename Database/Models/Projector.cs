@@ -4,7 +4,7 @@ namespace APBD_2.Database.Models;
 
 public sealed class Projector : Equipment
 {
-    public Projector(int id, string name, int lumens, bool supports4K) : base(id, name)
+    public Projector(string name, int lumens, bool supports4K) : base(name)
     {
         Lumens = lumens;
         Supports4K = supports4K;

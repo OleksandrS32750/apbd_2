@@ -4,12 +4,12 @@ namespace APBD_2.Database.Models;
 
 public sealed class ElectroBike : Equipment
 {
-    public ElectroBike(int id, string name, decimal weight, int modelYear) : base(id, name)
+    public ElectroBike(string name, decimal weight, int modelYear) : base(name)
     {
         Weight = weight;
         ModelYear = modelYear;
     }
 
-    public int Weight { get; }
+    public decimal Weight { get; }
     public int ModelYear { get; }
 }
