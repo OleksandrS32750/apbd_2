@@ -20,7 +20,7 @@ public sealed class SimplePenaltyPolicy : IPenaltyPolicy
 
         var daysLate = (returnDate.Date - rental.DueDate.Date).Days;
 
-        // +1 , because any delay (1min,1hour,etc...) is counted as 1 day
+        // +1 , because any delay (1min,1hour,etc...) is counted as a full day
         return daysLate * (_dailyPenalty + 1);
     }
 }

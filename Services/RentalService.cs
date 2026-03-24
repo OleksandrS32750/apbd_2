@@ -10,8 +10,6 @@ public sealed class RentalService
     private readonly List<Equipment> _equipment = [];
     private readonly List<Rental> _rentals = [];
     private readonly IPenaltyPolicy _penaltyPolicy;
-    private int _nextUserId = 1;
-    private int _nextEquipmentId = 1;
     private int _nextRentalId = 1;
 
     public RentalService(IPenaltyPolicy penaltyPolicy)
@@ -23,39 +21,28 @@ public sealed class RentalService
     public IReadOnlyList<Equipment> EquipmentItems => _equipment;
     public IReadOnlyList<Rental> Rentals => _rentals;
 
-    public Student AddStudent(string firstName, string lastName)
-    {
-        var student = new Student(_nextUserId++, firstName, lastName);
-        _users.Add(student);
-        return student;
+    public void AddUser(User user)
+    {   
+        ArgumentNullException.ThrowIfNull(user);
+
+        if (_users.Any(u => u.Id == user.Id))
+        {
+            throw new InvalidOperationException($"user with id {user.Id} already exists");
+        }
+
+        _users.Add(user);
     }
 
-    public Employee AddEmployee(string firstName, string lastName)
+    public void AddEquipment(Equipment equipment)
     {
-        var employee = new Employee(_nextUserId++, firstName, lastName);
-        _users.Add(employee);
-        return employee;
-    }
+        ArgumentNullException.ThrowIfNull(equipment);
 
-    public Laptop AddLaptop(string name, int ramGb, int storageGb)
-    {
-        var laptop = new Laptop(_nextEquipmentId++, name, ramGb, storageGb);
-        _equipment.Add(laptop);
-        return laptop;
-    }
+        if (_equipment.Any(e => e.Id == equipment.Id))
+        {
+            throw new InvalidOperationException($"equipment with id {equipment.Id} already exists");
+        }
 
-    public Projector AddProjector(string name, int lumens, bool supports4K)
-    {
-        var projector = new Projector(_nextEquipmentId++, name, lumens, supports4K);
-        _equipment.Add(projector);
-        return projector;
-    }
-
-    public Camera AddCamera(string name, bool mirrorless, int megapixels)
-    {
-        var camera = new Camera(_nextEquipmentId++, name, mirrorless, megapixels);
-        _equipment.Add(camera);
-        return camera;
+        _equipment.Add(equipment);
     }
 
     public IReadOnlyList<Equipment> GetAvailableEquipment() =>
@@ -68,14 +55,14 @@ public sealed class RentalService
 
         if (!item.IsAvailableForRental)
         {
-            throw new InvalidOperationException("Equipment is not available for rental.");
+            throw new InvalidOperationException($"{item.Name} is not available");
         }
 
         var activeRentalsForUser = _rentals.Count(r => r.IsActive && r.User.Id == userId);
         if (activeRentalsForUser >= user.RentalLimit)
         {
             throw new InvalidOperationException(
-                $"User has exceeded rental limit ({user.RentalLimit}) for type {user.UserType}.");
+                $"user has exceeded his rental limit: ({user.RentalLimit})");
         }
 
         var rental = new Rental(
@@ -92,8 +79,7 @@ public sealed class RentalService
 
     public decimal ReturnEquipment(int rentalId, DateTime returnDate)
     {
-        var rental = _rentals.SingleOrDefault(r => r.Id == rentalId)
-            ?? throw new InvalidOperationException("Rental not found.");
+        var rental = GetRental(rentalId);
 
         if (!rental.IsActive)
         {
@@ -126,26 +112,62 @@ public sealed class RentalService
     public string BuildSummaryReport(DateTime now)
     {
         var active = _rentals.Count(r => r.IsActive);
-        var overdue = _rentals.Count(r => r.IsOverdue(now));
-        var unavailable = _equipment.Count(e => e.Status == EquipmentStatus.Unavailable);
         var available = _equipment.Count(e => e.Status == EquipmentStatus.Available);
         var totalPenalties = _rentals.Sum(r => r.Penalty);
 
         return
-            $"Users: {_users.Count}\n" +
-            $"Equipment total: {_equipment.Count}\n" +
-            $"Equipment available: {available}\n" +
-            $"Equipment unavailable: {unavailable}\n" +
-            $"Active rentals: {active}\n" +
-            $"Overdue rentals: {overdue}\n" +
-            $"Collected penalties: {totalPenalties:C}";
+            $"users using the service: {_users.Count}\n" +
+            $"total equipment (with any status): {_equipment.Count}\n" +
+            $"equipment avaialble: {available}\n" +
+            $"active rentals: {active}\n" +
+            $"recieved penalties: {totalPenalties:C}";
     }
 
     private User GetUser(int userId) =>
-        _users.SingleOrDefault(u => u.Id == userId)
-        ?? throw new InvalidOperationException("User not found.");
+        FindUserById(userId) ?? throw new InvalidOperationException("user not found");
 
     private Equipment GetEquipment(int equipmentId) =>
-        _equipment.SingleOrDefault(e => e.Id == equipmentId)
-        ?? throw new InvalidOperationException("Equipment not found.");
+        FindEquipmentById(equipmentId) ?? throw new InvalidOperationException("eqipment not found");
+
+    private Rental GetRental(int rentalId) =>
+        FindRentalById(rentalId) ?? throw new InvalidOperationException("rental not found");
+
+    private User? FindUserById(int userId)
+    {
+        for (var i = 0; i < _users.Count; i++)
+        {
+            if (_users[i].Id == userId)
+            {
+                return _users[i];
+            }
+        }
+
+        return null;
+    }
+
+    private Equipment? FindEquipmentById(int equipmentId)
+    {
+        for (var i = 0; i < _equipment.Count; i++)
+        {
+            if (_equipment[i].Id == equipmentId)
+            {
+                return _equipment[i];
+            }
+        }
+
+        return null;
+    }
+
+    private Rental? FindRentalById(int rentalId)
+    {
+        for (var i = 0; i < _rentals.Count; i++)
+        {
+            if (_rentals[i].Id == rentalId)
+            {
+                return _rentals[i];
+            }
+        }
+
+        return null;
+    }
 }
