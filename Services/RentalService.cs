@@ -113,14 +113,16 @@ public sealed class RentalService
     {
         var active = _rentals.Count(r => r.IsActive);
         var available = _equipment.Count(e => e.Status == EquipmentStatus.Available);
+        var unavailable = _equipment.Count(e => e.Status == EquipmentStatus.Unavailable);
         var totalPenalties = _rentals.Sum(r => r.Penalty);
 
         return
             $"users using the service: {_users.Count}\n" +
-            $"total equipment (with any status): {_equipment.Count}\n" +
+            $"total equipment (any status): {_equipment.Count}\n" +
             $"equipment avaialble: {available}\n" +
+            $"equipment unavaialble: {unavailable}\n" +
             $"active rentals: {active}\n" +
-            $"recieved penalties: {totalPenalties:C}";
+            $"recieved penalties: {totalPenalties}$";
     }
 
     private User GetUser(int userId) =>

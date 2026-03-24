@@ -4,9 +4,11 @@ namespace APBD_2.Database.Interfaces;
 
 public abstract class User
 {
-    protected User(int id, string firstName, string lastName)
+    private static int _nextId = 1;
+
+    protected User(string firstName, string lastName)
     {
-        Id = id;
+        Id = _nextId++;
         FirstName = firstName;
         LastName = lastName;
     }

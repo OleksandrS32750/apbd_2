@@ -4,9 +4,11 @@ namespace APBD_2.Database.Interfaces;
 
 public abstract class Equipment
 {
-    protected Equipment(int id, string name)
+    private static int _nextId = 1;
+
+    protected Equipment(string name)
     {
-        Id = id;
+        Id = _nextId++;
         Name = name;
         Status = EquipmentStatus.Available;
     }
